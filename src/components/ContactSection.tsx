@@ -18,7 +18,7 @@ const ContactSection = () => {
   };
 
   const contactInfo = [
-    { icon: Phone, title: "Call Us", details: ["+91 98765 43210", "+91 12345 67890"] },
+    { icon: Phone, title: "Call Us", details: ["+91 00000000", "+91 00000000"] },
     { icon: Mail, title: "Email Us", details: ["hello@Honey Chats.in", "support@Honey Chats.in"] },
     { icon: MapPin, title: "Visit Us", details: ["123, Honey Lane, Shimla", "Himachal Pradesh - 171001"] },
     { icon: Clock, title: "Business Hours", details: ["Mon - Sat: 9AM - 7PM", "Sunday: 10AM - 5PM"] },
@@ -139,7 +139,7 @@ const ContactSection = () => {
                     type="tel"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    placeholder="+91 98765 43210"
+                    placeholder="+91 00000000"
                     className="w-full px-4 py-3 rounded-xl bg-muted/50 border border-border focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                   />
                 </div>
@@ -179,7 +179,7 @@ const ContactSection = () => {
                     allowFullScreen
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
-                    title="Golden Nectar Location"
+                    title="Honey Chat Location"
                   />
                 </div>
                 
@@ -194,7 +194,7 @@ const ContactSection = () => {
                       <MapPin className="w-5 h-5 text-secondary-foreground" />
                     </div>
                     <div className="flex-1">
-                      <h4 className="font-serif font-bold text-lg mb-1">Golden Nectar Honey</h4>
+                      <h4 className="font-serif font-bold text-lg mb-1">Honey Chat</h4>
                       <p className="text-muted-foreground text-sm mb-2">
                         123, Honey Lane, Shimla, HP - 171001
                       </p>
@@ -214,14 +214,14 @@ const ContactSection = () => {
               {/* WhatsApp & Call Buttons */}
               <div className="grid grid-cols-2 gap-4 mt-5">
                 <a
-                  href="tel:+919876543210"
+                  href="tel:+9100000000"
                   className="flex items-center justify-center gap-2 px-6 py-4 bg-secondary text-secondary-foreground rounded-2xl font-medium hover:bg-secondary/90 transition-colors"
                 >
                   <Phone className="w-5 h-5" />
                   Call Now
                 </a>
                 <a
-                  href="https://wa.me/919876543210"
+                  href="https://wa.me/9100000000"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-center gap-2 px-6 py-4 bg-gradient-honey text-secondary-foreground rounded-2xl font-medium hover:shadow-honey transition-all"

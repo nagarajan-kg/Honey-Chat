@@ -26,7 +26,7 @@ const features = [
   {
     icon: Heart,
     title: "Customer Happiness",
-    description: "Over 50,000 happy customers trust Golden Nectar.",
+    description: "Over 50,000 happy customers trust Honey Chat.",
   },
   {
     icon: Sparkles,
@@ -78,13 +78,13 @@ const WhyChooseUs = () => {
         >
           <span className="inline-flex items-center gap-2 px-4 py-2 bg-primary/20 rounded-full text-primary font-medium text-sm mb-6">
             <Award size={16} />
-            Why Golden Nectar
+            Why Honey Chat
           </span>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 text-secondary-foreground">
             The <span className="text-gradient-honey">Golden Standard</span> of Honey
           </h2>
           <p className="text-muted-foreground text-lg">
-            What makes us India's most trusted honey brand? Here's why thousands choose Golden Nectar.
+            What makes us India's most trusted honey brand? Here's why thousands choose Honey Chat.
           </p>
         </motion.div>
 

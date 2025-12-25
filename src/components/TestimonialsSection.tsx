@@ -5,28 +5,28 @@ import FloatingIcons from "./FloatingIcons";
 const testimonials = [
   {
     id: 1,
-    name: "Priya Sharma",
+    name: "Honey Chat",
     location: "Mumbai, Maharashtra",
     rating: 5,
-    text: "The Himalayan honey is absolutely divine! My family has been using Golden Nectar for years now. The quality is consistently excellent.",
+    text: "The Himalayan honey is absolutely divine! My family has been using Honey Chat for years now. The quality is consistently excellent.",
   },
   {
     id: 2,
-    name: "Dr. Arun Gupta",
+    name: "Honey Chat",
     location: "Delhi",
     rating: 5,
-    text: "As a physician, I recommend Golden Nectar to all my patients. It's the only honey I trust for its purity and therapeutic benefits.",
+    text: "As a physician, I recommend Honey Chat to all my patients. It's the only honey I trust for its purity and therapeutic benefits.",
   },
   {
     id: 3,
-    name: "Meera Patel",
+    name: "Honey Chat",
     location: "Ahmedabad, Gujarat",
     rating: 5,
     text: "Best honey I've ever tasted! The Wild Forest variety has such a rich, complex flavor. Worth every rupee!",
   },
   {
     id: 4,
-    name: "Vikram Singh",
+    name: "Honey Chat",
     location: "Jaipur, Rajasthan",
     rating: 5,
     text: "Started using their Multiflora honey 3 years ago. The consistent quality and quick delivery keeps me coming back.",
@@ -58,7 +58,7 @@ const TestimonialsSection = () => {
             What Our <span className="text-gradient-honey">Customers</span> Say
           </h2>
           <p className="text-muted-foreground text-lg">
-            Join thousands of happy customers who have made Golden Nectar a part of their daily lives.
+            Join thousands of happy customers who have made Honey Chat a part of their daily lives.
           </p>
         </motion.div>
 
@@ -88,12 +88,8 @@ const TestimonialsSection = () => {
 
                 <div className="flex items-center gap-4">
                   {/* Avatar Placeholder */}
-                  <div className="w-12 h-12 rounded-full bg-gradient-honey flex items-center justify-center shadow-honey overflow-hidden">
-                    <img 
-                      src={`https://images.unsplash.com/photo-${testimonial.id === 1 ? '1494790108377' : testimonial.id === 2 ? '1507003211169' : testimonial.id === 3 ? '1500648767791' : '1494790108755'}?w=100&h=100&fit=crop&q=80`}
-                      alt={testimonial.name}
-                      className="w-full h-full object-cover"
-                    />
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/80 to-primary/60 ring-2 ring-secondary flex items-center justify-center shadow-honey overflow-hidden">
+                    <User className="w-6 h-6 text-secondary-foreground" />
                   </div>
                   <div>
                     <h4 className="font-serif font-bold text-foreground">{testimonial.name}</h4>

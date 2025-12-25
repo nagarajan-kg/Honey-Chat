@@ -78,7 +78,7 @@ const HoneyGallery = () => {
                   <motion.div
                     animate={{ y: [0, -5, 0] }}
                     transition={{ duration: 3, repeat: Infinity, delay: index * 0.2 }}
-                    className="w-24 h-32 rounded-2xl bg-white/20 backdrop-blur-sm mb-4 overflow-hidden shadow-lg"
+                    className="w-48 h-64 rounded-2xl bg-white/20 backdrop-blur-sm mb-4 overflow-hidden shadow-lg"
                   >
                     <img 
                       src={`https://images.unsplash.com/photo-${index % 3 === 0 ? '1558642452-9d2a7deb7f62' : index % 3 === 1 ? '1606313564200-e75d5e31fcfd' : '1571875257727-256c48ca3172'}?w=200&h=300&fit=crop&q=80`}
@@ -98,7 +98,7 @@ const HoneyGallery = () => {
                     className="absolute inset-0 bg-secondary/80 backdrop-blur-sm flex items-center justify-center"
                   >
                     <div className="text-center text-secondary-foreground">
-                      <div className="w-16 h-20 rounded-xl bg-primary/20 mx-auto mb-3 overflow-hidden">
+                      <div className="w-28 h-36 rounded-xl bg-primary/20 mx-auto mb-3 overflow-hidden">
                         <img 
                           src={`https://images.unsplash.com/photo-${index % 3 === 0 ? '1558642452-9d2a7deb7f62' : index % 3 === 1 ? '1606313564200-e75d5e31fcfd' : '1571875257727-256c48ca3172'}?w=150&h=200&fit=crop&q=80`}
                           alt={item.name}

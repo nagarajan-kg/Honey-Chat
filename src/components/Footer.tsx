@@ -28,7 +28,7 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="relative overflow-hidden">
+    <footer id="footer" className="relative overflow-hidden">
       {/* Wave Separator */}
       <div className="bg-background">
         <svg viewBox="0 0 1440 100" className="w-full h-16 fill-secondary" preserveAspectRatio="none">
@@ -191,12 +191,12 @@ const Footer = () => {
               <h4 className="font-serif text-lg font-bold mb-5 text-primary">Get In Touch</h4>
               <ul className="space-y-4">
                 <li>
-                  <a href="tel:+919876543210" className="flex items-start gap-3 text-muted-foreground hover:text-primary transition-colors group">
+                  <a href="tel:+9100000000" className="flex items-start gap-3 text-muted-foreground hover:text-primary transition-colors group">
                     <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 transition-colors">
                       <Phone className="w-4 h-4 text-primary" />
                     </div>
                     <div>
-                      <div className="text-sm font-medium text-secondary-foreground">+91 98765 43210</div>
+                      <div className="text-sm font-medium text-secondary-foreground">+91 00000000</div>
                       <div className="text-xs">Mon-Sat, 9AM-7PM</div>
                     </div>
                   </a>
@@ -269,7 +269,7 @@ const Footer = () => {
           <div className="container mx-auto px-4 lg:px-8 py-6">
             <div className="flex flex-col md:flex-row items-center justify-between gap-4">
               <p className="text-muted-foreground text-sm text-center md:text-left flex items-center gap-1">
-                © 2024 Golden Nectar Honey. Made with <Heart className="w-4 h-4 text-red-500 fill-red-500" /> in India 🇮🇳
+                © 2024 Honey Chat. Made with <Heart className="w-4 h-4 text-red-500 fill-red-500" /> in India 🇮🇳
               </p>
               <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground">
                 {footerLinks.legal.map((link) => (

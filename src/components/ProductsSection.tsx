@@ -1,7 +1,7 @@
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { Star, ShoppingCart, Leaf, Heart, MapPin, Check } from "lucide-react";
+import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from "framer-motion";
+import { Star, ShoppingCart, Leaf, Heart, MapPin, Check, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState, MouseEvent } from "react";
+import { useState, MouseEvent, useEffect } from "react";
 import FloatingIcons from "./FloatingIcons";
 import { useCart } from "@/context/CartContext";
 import { toast } from "sonner";
@@ -170,7 +170,12 @@ const Product3DCard = ({ product, index }: { product: typeof products[0]; index:
           <motion.div
             animate={isHovered ? { scale: 1.1, y: -5 } : { scale: 1, y: 0 }}
             transition={{ duration: 0.3 }}
-            className="relative w-24 h-32 rounded-2xl bg-white/30 backdrop-blur-sm shadow-lg overflow-hidden"
+            className="relative rounded-2xl bg-white/30 backdrop-blur-sm shadow-lg overflow-hidden mx-auto cursor-pointer"
+            style={{ width: '38%', aspectRatio: '3/4' }}
+            onClick={() => {
+              const event = new CustomEvent('openProductLightbox', { detail: { productId: product.id } });
+              window.dispatchEvent(event);
+            }}
           >
             <img 
               src={`https://images.unsplash.com/photo-${product.id % 3 === 0 ? '1558642452-9d2a7deb7f62' : product.id % 3 === 1 ? '1606313564200-e75d5e31fcfd' : '1571875257727-256c48ca3172'}?w=200&h=300&fit=crop&q=80`}
@@ -280,6 +285,72 @@ const Product3DCard = ({ product, index }: { product: typeof products[0]; index:
 };
 
 const ProductsSection = () => {
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [currentProductIndex, setCurrentProductIndex] = useState(0);
+
+  // Listen for lightbox open events and keyboard navigation
+  useEffect(() => {
+    const handleOpenLightbox = (e: CustomEvent) => {
+      const productIndex = products.findIndex(p => p.id === e.detail.productId);
+      if (productIndex !== -1) {
+        setCurrentProductIndex(productIndex);
+        setLightboxOpen(true);
+      }
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!lightboxOpen) return;
+      
+      if (e.key === 'Escape') {
+        setLightboxOpen(false);
+      } else if (e.key === 'ArrowLeft') {
+        setCurrentProductIndex((prev) => (prev - 1 + products.length) % products.length);
+        setSelectedSize(2);
+      } else if (e.key === 'ArrowRight') {
+        setCurrentProductIndex((prev) => (prev + 1) % products.length);
+        setSelectedSize(2);
+      }
+    };
+
+    window.addEventListener('openProductLightbox', handleOpenLightbox as EventListener);
+    window.addEventListener('keydown', handleKeyDown);
+    
+    return () => {
+      window.removeEventListener('openProductLightbox', handleOpenLightbox as EventListener);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [lightboxOpen]);
+
+  const currentProduct = products[currentProductIndex];
+  const [selectedSize, setSelectedSize] = useState(2);
+  const { addItem } = useCart();
+
+  const currentPrice = currentProduct ? Math.round(currentProduct.basePrice * sizeOptions[selectedSize].priceMultiplier) : 0;
+  const currentOriginalPrice = currentProduct ? Math.round(currentProduct.originalPrice * sizeOptions[selectedSize].priceMultiplier) : 0;
+
+  const handleNext = () => {
+    setCurrentProductIndex((prev) => (prev + 1) % products.length);
+    setSelectedSize(2); // Reset size when changing product
+  };
+
+  const handlePrevious = () => {
+    setCurrentProductIndex((prev) => (prev - 1 + products.length) % products.length);
+    setSelectedSize(2); // Reset size when changing product
+  };
+
+  const handleAddToCart = () => {
+    if (currentProduct) {
+      addItem({
+        id: currentProduct.id,
+        name: currentProduct.name,
+        size: sizeOptions[selectedSize].size,
+        price: currentPrice,
+        image: `https://images.unsplash.com/photo-${currentProduct.id % 3 === 0 ? '1558642452-9d2a7deb7f62' : currentProduct.id % 3 === 1 ? '1606313564200-e75d5e31fcfd' : '1571875257727-256c48ca3172'}?w=200&h=300&fit=crop&q=80`,
+      });
+      toast.success(`${currentProduct.name} (${sizeOptions[selectedSize].size}) added to cart!`);
+    }
+  };
+
   return (
     <section id="products" className="py-16 lg:py-20 section-light relative overflow-hidden">
       <FloatingIcons variant="light" />
@@ -396,6 +467,147 @@ const ProductsSection = () => {
           </Button>
         </motion.div>
       </div>
+
+      {/* Product Lightbox Modal */}
+      <AnimatePresence>
+        {lightboxOpen && currentProduct && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/90 backdrop-blur-md z-[100]"
+              onClick={() => setLightboxOpen(false)}
+            />
+            
+            {/* Lightbox Content */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="fixed inset-4 md:inset-8 lg:inset-16 z-[101] flex items-center justify-center"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="relative w-full max-w-6xl h-full max-h-[90vh] bg-card rounded-3xl shadow-elegant border border-border overflow-hidden flex flex-col lg:flex-row">
+                {/* Close Button */}
+                <button
+                  onClick={() => setLightboxOpen(false)}
+                  className="absolute top-4 right-4 z-20 p-2 rounded-full bg-background/80 backdrop-blur-sm hover:bg-primary hover:text-primary-foreground transition-colors"
+                >
+                  <X size={24} />
+                </button>
+
+                {/* Image Section */}
+                <div className="relative flex-1 bg-gradient-to-br from-primary/10 to-accent/10 flex items-center justify-center p-8 lg:p-12">
+                  <motion.img
+                    key={currentProduct.id}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    src={`https://images.unsplash.com/photo-${currentProduct.id % 3 === 0 ? '1558642452-9d2a7deb7f62' : currentProduct.id % 3 === 1 ? '1606313564200-e75d5e31fcfd' : '1571875257727-256c48ca3172'}?w=600&h=800&fit=crop&q=90`}
+                    alt={currentProduct.name}
+                    className="max-w-full max-h-[60vh] lg:max-h-[80vh] object-contain rounded-2xl shadow-2xl"
+                  />
+                  
+                  {/* Navigation Arrows */}
+                  <button
+                    onClick={handlePrevious}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-background/80 backdrop-blur-sm hover:bg-primary hover:text-primary-foreground transition-colors"
+                  >
+                    <ChevronLeft size={24} />
+                  </button>
+                  <button
+                    onClick={handleNext}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-background/80 backdrop-blur-sm hover:bg-primary hover:text-primary-foreground transition-colors"
+                  >
+                    <ChevronRight size={24} />
+                  </button>
+                </div>
+
+                {/* Details Section */}
+                <div className="flex-1 p-6 lg:p-8 overflow-y-auto">
+                  <div className="mb-4">
+                    <span className="px-3 py-1.5 bg-secondary text-secondary-foreground text-xs font-semibold rounded-full">
+                      {currentProduct.badge}
+                    </span>
+                  </div>
+
+                  <h2 className="font-serif text-3xl lg:text-4xl font-bold mb-2">{currentProduct.name}</h2>
+                  
+                  <p className="text-sm font-medium text-primary mb-4 flex items-center gap-1">
+                    <MapPin size={14} />
+                    {currentProduct.origin}
+                  </p>
+
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="flex items-center gap-1">
+                      <Star size={18} className="fill-primary text-primary" />
+                      <span className="text-lg font-semibold">{currentProduct.rating}</span>
+                    </div>
+                    <span className="text-sm text-muted-foreground">
+                      ({currentProduct.reviews} reviews)
+                    </span>
+                  </div>
+
+                  <div className="flex flex-wrap gap-2 mb-6">
+                    {currentProduct.features.map((feature, i) => (
+                      <span
+                        key={i}
+                        className="text-sm px-3 py-1 bg-muted rounded-full text-muted-foreground"
+                      >
+                        {feature}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div className="mb-6">
+                    <p className="text-sm text-muted-foreground mb-3">Select Size:</p>
+                    <div className="grid grid-cols-4 gap-2">
+                      {sizeOptions.map((option, i) => (
+                        <button
+                          key={option.size}
+                          onClick={() => setSelectedSize(i)}
+                          className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                            selectedSize === i
+                              ? "bg-primary text-primary-foreground"
+                              : "bg-muted hover:bg-muted/80 text-muted-foreground"
+                          }`}
+                        >
+                          {option.size}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between mb-6 pt-4 border-t border-border">
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-3xl font-bold text-foreground">₹{currentPrice}</span>
+                      <span className="text-lg text-muted-foreground line-through">
+                        ₹{currentOriginalPrice}
+                      </span>
+                    </div>
+                  </div>
+
+                  <Button 
+                    size="lg" 
+                    onClick={handleAddToCart}
+                    className="w-full bg-gradient-honey text-secondary-foreground hover:shadow-honey gap-2"
+                  >
+                    <ShoppingCart size={18} />
+                    Add to Cart
+                  </Button>
+
+                  {/* Product Counter */}
+                  <div className="mt-4 text-center text-sm text-muted-foreground">
+                    {currentProductIndex + 1} of {products.length}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </section>
   );
 };

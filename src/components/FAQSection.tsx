@@ -5,12 +5,12 @@ import FloatingIcons from "./FloatingIcons";
 
 const faqs = [
   {
-    question: "What makes Golden Nectar honey different from regular honey?",
+    question: "What makes Honey Chat honey different from regular honey?",
     answer: "Our honey is 100% raw, unprocessed, and ethically sourced from specific regions across India. We never heat-treat or filter our honey, preserving all natural enzymes, antioxidants, and health benefits. Each variety has unique characteristics based on its regional floral source."
   },
   {
     question: "How do I know if the honey is genuine and pure?",
-    answer: "Every batch of Golden Nectar honey undergoes rigorous testing in FSSAI-approved laboratories. We provide authenticity certificates with each purchase, and our honey passes the water test, flame test, and crystallization test for purity verification."
+    answer: "Every batch of Honey Chat honey undergoes rigorous testing in FSSAI-approved laboratories. We provide authenticity certificates with each purchase, and our honey passes the water test, flame test, and crystallization test for purity verification."
   },
   {
     question: "Why does honey crystallize? Is it still good to consume?",

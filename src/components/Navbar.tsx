@@ -17,6 +17,7 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProductsOpen, setIsProductsOpen] = useState(false);
+  const [isMobileProductsOpen, setIsMobileProductsOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -48,6 +49,43 @@ const Navbar = () => {
   const filteredProducts = honeyProducts.filter((p) =>
     p.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const handleNavClick = (href: string) => {
+    setIsMobileMenuOpen(false);
+    setIsMobileProductsOpen(false);
+    setIsSearchOpen(false);
+    setIsCartOpen(false);
+    
+    // Small delay to ensure menu closes before scrolling
+    setTimeout(() => {
+      if (href === "#home" || href === "#") {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else if (href === "#footer") {
+        window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+      } else {
+        const element = document.querySelector(href);
+        if (element) {
+          const elementPosition = element.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - 80; // Account for fixed navbar
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: "smooth"
+          });
+        }
+      }
+    }, 100);
+  };
+
+  useEffect(() => {
+    if (isMobileMenuOpen || isSearchOpen || isCartOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isMobileMenuOpen, isSearchOpen, isCartOpen]);
 
   return (
     <motion.nav
@@ -88,11 +126,11 @@ const Navbar = () => {
                   >
                     <motion.a
                       href={link.href}
-                      className="relative px-4 py-2 text-sm font-medium text-primary transition-colors duration-300 rounded-lg hover:bg-primary/10 flex items-center gap-1"
+                      className="relative px-4 py-2 text-sm font-medium text-primary transition-colors duration-300 rounded-lg hover:bg-primary/10 flex items-center gap-2"
                       whileHover={{ y: -1 }}
                     >
-                      {link.name}
-                      <ChevronDown size={14} className={`transition-transform ${isProductsOpen ? "rotate-180" : ""}`} />
+                      <span>{link.name}</span>
+                      <ChevronDown size={14} className={`transition-transform text-primary ${isProductsOpen ? "rotate-180" : ""}`} />
                     </motion.a>
                     
                     {/* Products Dropdown */}
@@ -286,9 +324,9 @@ const Navbar = () => {
             <div className="w-px h-6 bg-border mx-2" />
 
             {/* Phone */}
-            <a href="tel:+919876543210" className="flex items-center gap-2 text-sm text-primary transition-colors px-3 py-2 rounded-lg hover:bg-primary/10">
+            <a href="tel:+9100000000" className="flex items-center gap-2 text-sm text-primary transition-colors px-3 py-2 rounded-lg hover:bg-primary/10">
               <Phone size={16} />
-              <span className="font-medium">+91 98765 43210</span>
+              <span className="font-medium">+91 00000000</span>
             </a>
 
             <Button className="bg-gradient-honey text-secondary-foreground hover:shadow-honey transition-all font-semibold">
@@ -296,15 +334,156 @@ const Navbar = () => {
             </Button>
           </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            className="lg:hidden p-2.5 rounded-xl bg-primary/5 text-foreground"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          >
-            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          {/* Mobile Actions - Search & Cart */}
+          <div className="lg:hidden flex items-center gap-2">
+            <button
+              onClick={() => setIsSearchOpen(!isSearchOpen)}
+              className="p-2.5 rounded-xl hover:bg-primary/5 transition-colors"
+            >
+              <Search size={20} className="text-primary" />
+            </button>
+            <div className="relative">
+              <button
+                onClick={() => setIsCartOpen(!isCartOpen)}
+                className="p-2.5 rounded-xl hover:bg-primary/5 transition-colors relative"
+              >
+                <ShoppingBag size={20} className="text-primary" />
+                {totalItems > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-primary text-primary-foreground text-[10px] font-bold rounded-full flex items-center justify-center">
+                    {totalItems}
+                  </span>
+                )}
+              </button>
+              <AnimatePresence>
+                {isCartOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    className="fixed inset-x-4 top-20 bg-card rounded-2xl shadow-elegant border border-border overflow-hidden z-50 max-h-[70vh] flex flex-col"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div className="p-4 border-b border-border flex items-center justify-between">
+                      <h3 className="font-semibold">Your Cart ({totalItems})</h3>
+                      <button onClick={() => setIsCartOpen(false)} className="text-muted-foreground hover:text-foreground">
+                        <X size={20} />
+                      </button>
+                    </div>
+                    <div className="overflow-y-auto flex-1">
+                      {items.length > 0 ? (
+                        items.map((item) => (
+                          <div key={`${item.id}-${item.size}`} className="flex items-center gap-3 p-3 border-b border-border/50">
+                            <div className="w-12 h-12 rounded-lg bg-primary/10 overflow-hidden">
+                              <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium truncate">{item.name}</p>
+                              <p className="text-xs text-muted-foreground">{item.size} × {item.quantity}</p>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-sm font-semibold">₹{item.price * item.quantity}</p>
+                              <button
+                                onClick={() => removeItem(item.id, item.size)}
+                                className="text-xs text-destructive hover:underline"
+                              >
+                                Remove
+                              </button>
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <p className="p-6 text-center text-muted-foreground text-sm">Your cart is empty</p>
+                      )}
+                    </div>
+                    {items.length > 0 && (
+                      <div className="p-4 border-t border-border">
+                        <div className="flex justify-between mb-3">
+                          <span className="text-muted-foreground">Total:</span>
+                          <span className="font-bold">₹{totalPrice}</span>
+                        </div>
+                        <Button className="w-full bg-gradient-honey text-secondary-foreground" onClick={() => setIsCartOpen(false)}>
+                          Checkout
+                        </Button>
+                      </div>
+                    )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+            <button
+              className="p-2.5 rounded-xl bg-primary/10 text-primary"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              {isMobileMenuOpen ? <X size={24} className="text-primary" /> : <Menu size={24} className="text-primary" />}
+            </button>
+          </div>
         </div>
       </div>
+
+      {/* Mobile Backdrop */}
+      {(isMobileMenuOpen || isSearchOpen || isCartOpen) && (
+        <div 
+          className="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
+          onClick={() => {
+            setIsMobileMenuOpen(false);
+            setIsSearchOpen(false);
+            setIsCartOpen(false);
+          }}
+        />
+      )}
+
+      {/* Mobile Search Overlay */}
+      <AnimatePresence>
+        {isSearchOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="lg:hidden fixed inset-x-4 top-20 bg-card rounded-2xl shadow-elegant border border-border z-50 overflow-hidden"
+          >
+            <div className="p-4 border-b border-border flex items-center gap-2">
+              <Search className="text-primary" size={20} />
+              <input
+                ref={searchRef}
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search honey..."
+                className="flex-1 bg-transparent outline-none text-sm"
+              />
+              <button onClick={() => setIsSearchOpen(false)} className="text-muted-foreground hover:text-foreground">
+                <X size={20} />
+              </button>
+            </div>
+            {searchQuery && (
+              <div className="max-h-60 overflow-y-auto">
+                {filteredProducts.length > 0 ? (
+                  filteredProducts.map((product) => (
+                    <a
+                      key={product.name}
+                      href={product.href}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setIsSearchOpen(false);
+                        setSearchQuery("");
+                        handleNavClick(product.href);
+                      }}
+                      className="flex items-center gap-3 p-3 hover:bg-muted transition-colors border-b border-border/50"
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-primary/10 overflow-hidden">
+                        <img src={`https://images.unsplash.com/photo-${honeyProducts.indexOf(product) % 3 === 0 ? '1558642452-9d2a7deb7f62' : honeyProducts.indexOf(product) % 3 === 1 ? '1606313564200-e75d5e31fcfd' : '1571875257727-256c48ca3172'}?w=100&h=100&fit=crop&q=80`} alt="" className="w-full h-full object-cover" />
+                      </div>
+                      <span className="text-sm">{product.name}</span>
+                    </a>
+                  ))
+                ) : (
+                  <p className="p-3 text-sm text-muted-foreground">No products found</p>
+                )}
+              </div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Mobile Menu */}
       <AnimatePresence>
@@ -314,26 +493,69 @@ const Navbar = () => {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
-            className="lg:hidden bg-background border-t border-border"
+            className="lg:hidden bg-background/98 backdrop-blur-xl border-t border-border shadow-elegant z-50 relative"
+            onClick={(e) => e.stopPropagation()}
           >
             <div className="container mx-auto px-4 py-6 flex flex-col gap-2">
               {navLinks.map((link, index) => (
-                <motion.a
-                  key={link.name}
-                  href={link.href}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="text-base font-medium text-foreground/80 hover:text-primary hover:bg-primary/5 py-3 px-4 rounded-xl transition-colors"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  {link.name}
-                </motion.a>
+                link.hasDropdown ? (
+                  <div key={link.name} className="flex flex-col">
+                    <button
+                      onClick={() => setIsMobileProductsOpen(!isMobileProductsOpen)}
+                      className="text-base font-medium text-primary hover:text-primary/80 hover:bg-primary/5 py-3 px-4 rounded-xl transition-colors flex items-center justify-between w-full"
+                    >
+                      <span>{link.name}</span>
+                      <ChevronDown size={18} className={`transition-transform text-primary ${isMobileProductsOpen ? "rotate-180" : ""}`} />
+                    </button>
+                    {isMobileProductsOpen && (
+                      <div className="pl-4 mt-2 space-y-1">
+                        <a
+                          href="#products"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleNavClick("#products");
+                          }}
+                          className="block py-2 px-4 rounded-lg hover:bg-primary/5 text-sm text-primary"
+                        >
+                          View All Products
+                        </a>
+                        {honeyProducts.map((product) => (
+                          <a
+                            key={product.name}
+                            href={product.href}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              handleNavClick(product.href);
+                            }}
+                            className="block py-2 px-4 rounded-lg hover:bg-primary/5 text-sm text-primary"
+                          >
+                            {product.name}
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <motion.a
+                    key={link.name}
+                    href={link.href}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="text-base font-medium text-primary hover:text-primary/80 hover:bg-primary/5 py-3 px-4 rounded-xl transition-colors"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleNavClick(link.href);
+                    }}
+                  >
+                    {link.name}
+                  </motion.a>
+                )
               ))}
               <div className="pt-4 mt-2 border-t border-border flex flex-col gap-3">
-                <a href="tel:+919876543210" className="flex items-center justify-center gap-2 text-foreground/70 py-3">
+                <a href="tel:+9100000000" className="flex items-center justify-center gap-2 text-foreground/70 py-3">
                   <Phone size={18} />
-                  <span>+91 98765 43210</span>
+                  <span>+91 00000000</span>
                 </a>
                 <Button className="w-full bg-gradient-honey text-secondary-foreground font-semibold">
                   Order Now

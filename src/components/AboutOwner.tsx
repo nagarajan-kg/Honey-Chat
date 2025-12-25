@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Award, Users, Calendar, MapPin, Heart, Sparkles, Flower2, Sun } from "lucide-react";
+import { Award, Users, Calendar, MapPin, Heart, Sparkles, Flower2, Sun, User } from "lucide-react";
 import FloatingIcons from "./FloatingIcons";
 
 const stats = [
@@ -65,8 +65,8 @@ const AboutOwner = () => {
                   {/* Glow Ring */}
                   <div className="absolute inset-0 bg-gradient-honey rounded-full blur-xl opacity-40 scale-110" />
                   
-                  <div className="relative w-36 h-36 mx-auto rounded-full bg-gradient-honey flex items-center justify-center shadow-honey overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop&q=80" alt="Founder" className="w-full h-full object-cover" />
+                  <div className="relative w-36 h-36 mx-auto rounded-full bg-gradient-to-br from-primary/80 to-primary/60 flex items-center justify-center shadow-honey overflow-hidden">
+                    <User className="w-20 h-20 text-secondary-foreground" />
                   </div>
                   
                   {/* Decorative Bee Image */}
@@ -159,7 +159,7 @@ const AboutOwner = () => {
             </div>
 
             <p className="text-muted-foreground mb-8 leading-relaxed">
-              At Golden Nectar, we believe in preserving traditional beekeeping while embracing 
+              At Honey Chat, we believe in preserving traditional beekeeping while embracing 
               sustainable practices. Our bees roam free in nature's most beautiful landscapes, 
               creating honey that's as pure as it is delicious. Every drop is a gift from nature, 
               carefully harvested to bring you the authentic taste of India.
